@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS workers (
+    id UUID PRIMARY KEY,
+    user_id UUID UNIQUE REFERENCES users(id),
+    experience TEXT,
+    is_approved BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
