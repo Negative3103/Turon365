@@ -2,7 +2,6 @@ package repository
 
 import (
 	"Turon365/internal/models"
-	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -16,7 +15,7 @@ func (r *LocationRepository) Create(location *models.Location) error {
 	return err
 }
 
-func (r *LocationRepository) GetByID(id uuid.UUID) (*models.Location, error) {
+func (r *LocationRepository) GetByID(id string) (*models.Location, error) {
 	var location models.Location
 	query := `SELECT * FROM locations WHERE id = $1`
 	err := r.DB.Get(&location, query, id)
@@ -32,7 +31,7 @@ func (r *LocationRepository) Update(location *models.Location) error {
 	return err
 }
 
-func (r *LocationRepository) Delete(id uuid.UUID) error {
+func (r *LocationRepository) Delete(id string) error {
 	query := `DELETE FROM locations WHERE id = $1`
 	_, err := r.DB.Exec(query, id)
 	return err
