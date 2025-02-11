@@ -31,7 +31,13 @@ func (ctrl *LocationController) CreateLocation(c *gin.Context) {
 
 func (ctrl *LocationController) GetLocation(c *gin.Context) {
     id := c.Param("id")
-    location, err := ctrl.Repo.GetByID(id)
+    locationID, err := uuid.Parse(id)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid location ID"})
+        return
+    }
+
+    location, err := ctrl.Repo.GetByID(locationID)
     if err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Location not found"})
         return
@@ -41,13 +47,19 @@ func (ctrl *LocationController) GetLocation(c *gin.Context) {
 
 func (ctrl *LocationController) UpdateLocation(c *gin.Context) {
     id := c.Param("id")
+    locationID, err := uuid.Parse(id)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid location ID"})
+        return
+    }
+
     var location models.Location
     if err := c.ShouldBindJSON(&location); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
         return
     }
 
-    location.ID = uuid.MustParse(id)
+    location.ID = locationID
     if err := ctrl.Repo.Update(&location); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update location"})
         return
@@ -57,7 +69,13 @@ func (ctrl *LocationController) UpdateLocation(c *gin.Context) {
 
 func (ctrl *LocationController) DeleteLocation(c *gin.Context) {
     id := c.Param("id")
-    if err := ctrl.Repo.Delete(id); err != nil {
+    locationID, err := uuid.Parse(id)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid location ID"})
+        return
+    }
+
+    if err := ctrl.Repo.Delete(locationID); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not delete location"})
         return
     }

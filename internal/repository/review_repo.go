@@ -2,6 +2,7 @@ package repository
 
 import (
     "Turon365/internal/models"
+    "github.com/google/uuid"
     "github.com/jmoiron/sqlx"
 )
 
@@ -16,7 +17,7 @@ func (repo *ReviewRepository) Create(review *models.Review) error {
     return err
 }
 
-func (repo *ReviewRepository) GetByID(id string) (*models.Review, error) {
+func (repo *ReviewRepository) GetByID(id uuid.UUID) (*models.Review, error) {
     var review models.Review
     query := `SELECT * FROM reviews WHERE id = $1`
     err := repo.DB.Get(&review, query, id)
@@ -29,7 +30,7 @@ func (repo *ReviewRepository) Update(review *models.Review) error {
     return err
 }
 
-func (repo *ReviewRepository) Delete(id string) error {
+func (repo *ReviewRepository) Delete(id uuid.UUID) error {
     query := `DELETE FROM reviews WHERE id = $1`
     _, err := repo.DB.Exec(query, id)
     return err

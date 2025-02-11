@@ -31,7 +31,13 @@ func (ctrl *WorkerController) RegisterWorker(c *gin.Context) {
 
 func (ctrl *WorkerController) GetWorker(c *gin.Context) {
     id := c.Param("id")
-    worker, err := ctrl.Repo.GetByID(id)
+    workerID, err := uuid.Parse(id)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid worker ID"})
+        return
+    }
+
+    worker, err := ctrl.Repo.GetByID(workerID)
     if err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Worker not found"})
         return
@@ -41,12 +47,19 @@ func (ctrl *WorkerController) GetWorker(c *gin.Context) {
 
 func (ctrl *WorkerController) UpdateWorker(c *gin.Context) {
     id := c.Param("id")
+    workerID, err := uuid.Parse(id)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid worker ID"})
+        return
+    }
+
     var worker models.Worker
     if err := c.ShouldBindJSON(&worker); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
         return
     }
-    worker.ID = uuid.MustParse(id)
+
+    worker.ID = workerID
     if err := ctrl.Repo.Update(&worker); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update worker"})
         return
@@ -56,7 +69,13 @@ func (ctrl *WorkerController) UpdateWorker(c *gin.Context) {
 
 func (ctrl *WorkerController) DeleteWorker(c *gin.Context) {
     id := c.Param("id")
-    if err := ctrl.Repo.Delete(id); err != nil {
+    workerID, err := uuid.Parse(id)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid worker ID"})
+        return
+    }
+
+    if err := ctrl.Repo.Delete(workerID); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not delete worker"})
         return
     }

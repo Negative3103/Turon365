@@ -31,7 +31,13 @@ func (ctrl *UserController) RegisterUser(c *gin.Context) {
 
 func (ctrl *UserController) GetUser(c *gin.Context) {
     id := c.Param("id")
-    user, err := ctrl.Repo.GetByID(id)
+    userID, err := uuid.Parse(id)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+        return
+    }
+
+    user, err := ctrl.Repo.GetByID(userID)
     if err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
         return
@@ -41,12 +47,19 @@ func (ctrl *UserController) GetUser(c *gin.Context) {
 
 func (ctrl *UserController) UpdateUser(c *gin.Context) {
     id := c.Param("id")
+    userID, err := uuid.Parse(id)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+        return
+    }
+
     var user models.User
     if err := c.ShouldBindJSON(&user); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
         return
     }
-    user.ID = uuid.MustParse(id)
+
+    user.ID = userID
     if err := ctrl.Repo.Update(&user); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update user"})
         return
@@ -56,9 +69,15 @@ func (ctrl *UserController) UpdateUser(c *gin.Context) {
 
 func (ctrl *UserController) DeleteUser(c *gin.Context) {
     id := c.Param("id")
-    if err := ctrl.Repo.Delete(id); err != nil {
+    userID, err := uuid.Parse(id)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+        return
+    }
+
+    if err := ctrl.Repo.Delete(userID); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not delete user"})
         return
     }
-    c.JSON(http.StatusOK, gin.H{"message": "User deleted"})
+    c.JSON(http.StatusNoContent, nil)
 }

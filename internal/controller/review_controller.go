@@ -30,13 +30,14 @@ func (ctrl *ReviewController) CreateReview(c *gin.Context) {
 }
 
 func (ctrl *ReviewController) GetReview(c *gin.Context) {
-    id, err := uuid.Parse(c.Param("id"))
+    id := c.Param("id")
+    reviewID, err := uuid.Parse(id)
     if err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid review ID"})
         return
     }
 
-    review, err := ctrl.Repo.GetByID(id)
+    review, err := ctrl.Repo.GetByID(reviewID)
     if err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Review not found"})
         return
@@ -45,7 +46,8 @@ func (ctrl *ReviewController) GetReview(c *gin.Context) {
 }
 
 func (ctrl *ReviewController) UpdateReview(c *gin.Context) {
-    id, err := uuid.Parse(c.Param("id"))
+    id := c.Param("id")
+    reviewID, err := uuid.Parse(id)
     if err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid review ID"})
         return
@@ -57,7 +59,7 @@ func (ctrl *ReviewController) UpdateReview(c *gin.Context) {
         return
     }
 
-    review.ID = id
+    review.ID = reviewID
     if err := ctrl.Repo.Update(&review); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update review"})
         return
@@ -66,15 +68,16 @@ func (ctrl *ReviewController) UpdateReview(c *gin.Context) {
 }
 
 func (ctrl *ReviewController) DeleteReview(c *gin.Context) {
-    id, err := uuid.Parse(c.Param("id"))
+    id := c.Param("id")
+    reviewID, err := uuid.Parse(id)
     if err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid review ID"})
         return
     }
 
-    if err := ctrl.Repo.Delete(id); err != nil {
+    if err := ctrl.Repo.Delete(reviewID); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not delete review"})
         return
     }
-    c.JSON(http.StatusNoContent, nil)
+    c.JSON(http.StatusOK, gin.H{"message": "Review deleted"})
 }
