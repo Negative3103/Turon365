@@ -27,10 +27,26 @@ func (r *JobRepository) GetByID(id uuid.UUID) (*models.Job, error) {
     return &job, nil
 }
 
+func (r *JobRepository) GetAll() ([]models.Job, error) {
+    var jobs []models.Job
+    query := `SELECT * FROM jobs`
+    err := r.DB.Select(&jobs, query)
+    if err != nil {
+        return nil, err
+    }
+    return jobs, nil
+}
+
 func (r *JobRepository) Update(job *models.Job) error {
     query := `UPDATE jobs SET title=:title, description=:description, photo=:photo, client_id=:client_id, 
               worker_id=:worker_id, service_id=:service_id, status=:status WHERE id=:id`
     _, err := r.DB.NamedExec(query, job)
+    return err
+}
+
+func (r *JobRepository) UpdateStatus(id uuid.UUID, status string) error {
+    query := `UPDATE jobs SET status=$1 WHERE id=$2`
+    _, err := r.DB.Exec(query, status, id)
     return err
 }
 

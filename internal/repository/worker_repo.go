@@ -38,3 +38,9 @@ func (r *WorkerRepository) Delete(id uuid.UUID) error {
     _, err := r.DB.Exec(query, id)
     return err
 }
+
+func (r *WorkerRepository) Confirm(workerID uuid.UUID) error {
+    query := "UPDATE workers SET confirmed = TRUE WHERE id = $1"
+    _, err := r.DB.Exec(query, workerID)
+    return err
+}

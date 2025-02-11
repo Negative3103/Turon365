@@ -26,7 +26,7 @@ func init() {
     }
 	dsn := "host=localhost port=54321 user=note-user password=note-password dbname=note sslmode=disable"
     db, err = sqlx.Connect("postgres", dsn)
-    if err != nil {
+    if (err != nil) {
         logger.Fatal("Failed to connect to database", zap.Error(err))
     }
 
@@ -65,6 +65,14 @@ func main() {
     jobCtrl := &controller.JobController{Repo: jobRepo}
     paymentCtrl := &controller.PaymentController{Repo: paymentRepo}
     reviewCtrl := &controller.ReviewController{Repo: reviewRepo}
+    adminCtrl := &controller.AdminController{
+        WorkerRepo:   workerRepo,
+        CategoryRepo: categoryRepo,
+        LocationRepo: locationRepo,
+        JobRepo:      jobRepo,
+        PaymentRepo:  paymentRepo,
+        ReviewRepo:   reviewRepo,
+    }
 
     // Routes
     r.POST("/users", userCtrl.RegisterUser)
@@ -91,6 +99,7 @@ func main() {
     r.GET("/services/:id", serviceCtrl.GetService)
     r.PUT("/services/:id", serviceCtrl.UpdateService)
     r.DELETE("/services/:id", serviceCtrl.DeleteService)
+    r.POST("/services/:id/photo", serviceCtrl.UploadServicePhoto)
 
     r.POST("/jobs", jobCtrl.CreateJob)
     r.GET("/jobs/:id", jobCtrl.GetJob)
@@ -106,6 +115,17 @@ func main() {
     r.GET("/reviews/:id", reviewCtrl.GetReview)
     r.PUT("/reviews/:id", reviewCtrl.UpdateReview)
     r.DELETE("/reviews/:id", reviewCtrl.DeleteReview)
+
+    // Admin Routes
+    r.POST("/admin/workers/:id/confirm", adminCtrl.ConfirmWorker)
+    r.POST("/admin/categories", adminCtrl.AddCategory)
+    r.PUT("/admin/categories/:id", adminCtrl.UpdateCategory)
+    r.DELETE("/admin/categories/:id", adminCtrl.DeleteCategory)
+    r.POST("/admin/locations", adminCtrl.AddLocation)
+    r.PUT("/admin/locations/:id", adminCtrl.UpdateLocation)
+    r.DELETE("/admin/locations/:id", adminCtrl.DeleteLocation)
+    r.GET("/admin/jobs", adminCtrl.GetAllJobs)
+    r.PUT("/admin/jobs/:id/status", adminCtrl.UpdateJobStatus)
 
     port := os.Getenv("PORT")
     if port == "" {

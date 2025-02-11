@@ -3,6 +3,7 @@ package controller
 import (
     "Turon365/internal/models"
     "Turon365/internal/repository"
+    "Turon365/internal/storage"
     "github.com/gin-gonic/gin"
     "github.com/google/uuid"
     "net/http"
@@ -79,4 +80,27 @@ func (ctrl *ServiceController) DeleteService(c *gin.Context) {
         return
     }
     c.JSON(http.StatusNoContent, nil)
+}
+
+func (ctrl *ServiceController) UploadServicePhoto(c *gin.Context) {
+    serviceID := c.Param("id")
+    file, err := c.FormFile("photo")
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file"})
+        return
+    }
+
+    filePath := "/tmp/" + file.Filename
+    if err := c.SaveUploadedFile(file, filePath); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not save file"})
+        return
+    }
+
+    objectName := "services/" + serviceID + "/" + file.Filename
+    if err := storage.UploadFile("photos", objectName, filePath, file.Header.Get("Content-Type")); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not upload file"})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully"})
 }

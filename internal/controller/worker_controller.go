@@ -81,3 +81,18 @@ func (ctrl *WorkerController) DeleteWorker(c *gin.Context) {
     }
     c.JSON(http.StatusOK, gin.H{"message": "Worker deleted"})
 }
+
+func (ctrl *WorkerController) ConfirmWorker(c *gin.Context) {
+    id := c.Param("id")
+    workerID, err := uuid.Parse(id)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid worker ID"})
+        return
+    }
+
+    if err := ctrl.Repo.Confirm(workerID); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not confirm worker"})
+        return
+    }
+    c.JSON(http.StatusOK, gin.H{"message": "Worker confirmed"})
+}

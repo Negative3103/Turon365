@@ -10,5 +10,6 @@ type Worker struct {
 	UserID     uuid.UUID `db:"user_id"`
 	Experience string    `db:"experience"`
 	IsApproved bool      `db:"is_approved"`
+	Confirmed  bool      `db:"confirmed"`
 	CreatedAt  time.Time `db:"created_at"`
 }

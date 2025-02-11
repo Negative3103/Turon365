@@ -3,6 +3,7 @@ package storage
 import (
     "context"
     "log"
+    "fmt"
 
     "github.com/minio/minio-go/v7"
     "github.com/minio/minio-go/v7/pkg/credentials"
@@ -38,4 +39,21 @@ func InitMinio() {
             log.Fatalf("Failed to create bucket: %v", err)
         }
     }
+}
+
+func UploadFile(bucketName, objectName, filePath, contentType string) error {
+    // Upload the file
+    _, err := MinioClient.FPutObject(context.Background(), bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
+    if err != nil {
+        return fmt.Errorf("failed to upload file: %v", err)
+    }
+    return nil
+}
+
+func DeleteFile(bucketName, objectName string) error {
+    err := MinioClient.RemoveObject(context.Background(), bucketName, objectName, minio.RemoveObjectOptions{})
+    if err != nil {
+        return fmt.Errorf("failed to delete file: %v", err)
+    }
+    return nil
 }
