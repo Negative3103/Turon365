@@ -12,7 +12,7 @@ import (
 var MinioClient *minio.Client
 
 func InitMinio() {
-    endpoint := "localhost:9000"
+    endpoint := "minio:9000"
     accessKeyID := "minioadmin"
     secretAccessKey := "minioadmin"
     useSSL := false
