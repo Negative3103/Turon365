@@ -83,15 +83,9 @@ func main() {
 	r.PUT("/workers/:id", middleware.AuthMiddleware(), workerCtrl.UpdateWorker)
 	r.DELETE("/workers/:id", middleware.AuthMiddleware(), workerCtrl.DeleteWorker)
 
-	r.POST("/categories", middleware.AuthMiddleware(), categoryCtrl.CreateCategory)
 	r.GET("/categories/:id", middleware.AuthMiddleware(), categoryCtrl.GetCategory)
-	r.PUT("/categories/:id", middleware.AuthMiddleware(), categoryCtrl.UpdateCategory)
-	r.DELETE("/categories/:id", middleware.AuthMiddleware(), categoryCtrl.DeleteCategory)
 
-	r.POST("/locations", middleware.AuthMiddleware(), locationCtrl.CreateLocation)
 	r.GET("/locations/:id", middleware.AuthMiddleware(), locationCtrl.GetLocation)
-	r.PUT("/locations/:id", middleware.AuthMiddleware(), locationCtrl.UpdateLocation)
-	r.DELETE("/locations/:id", middleware.AuthMiddleware(), locationCtrl.DeleteLocation)
 
 	r.POST("/services", middleware.AuthMiddleware(), serviceCtrl.CreateService)
 	r.GET("/services/:id", middleware.AuthMiddleware(), serviceCtrl.GetService)
