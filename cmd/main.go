@@ -73,12 +73,12 @@ func main() {
 	}
 
 	// Routes
-	r.POST("/users", userCtrl.RegisterUser) // Registration should not require AuthMiddleware
+	r.POST("/users", userCtrl.RegisterUser)
 	r.GET("/users/:id", middleware.AuthMiddleware(), userCtrl.GetUser)
 	r.PUT("/users/:id", middleware.AuthMiddleware(), userCtrl.UpdateUser)
 	r.DELETE("/users/:id", middleware.AuthMiddleware(), userCtrl.DeleteUser)
 
-	r.POST("/workers", middleware.AuthMiddleware(), workerCtrl.RegisterWorker)
+	r.POST("/workers", workerCtrl.RegisterWorker)
 	r.GET("/workers/:id", middleware.AuthMiddleware(), workerCtrl.GetWorker)
 	r.PUT("/workers/:id", middleware.AuthMiddleware(), workerCtrl.UpdateWorker)
 	r.DELETE("/workers/:id", middleware.AuthMiddleware(), workerCtrl.DeleteWorker)

@@ -6,10 +6,11 @@ import (
 )
 
 type Worker struct {
-	ID         uuid.UUID `db:"id"`
-	UserID     uuid.UUID `db:"user_id"`
-	Experience string    `db:"experience"`
-	IsApproved bool      `db:"is_approved"`
-	Confirmed  bool      `db:"confirmed"`
-	CreatedAt  time.Time `db:"created_at"`
+	ID          uuid.UUID `db:"id"`
+	Name        string    `db:"name"`
+	PhoneNumber string    `db:"phone_number"`
+	Experience  string    `db:"experience"`
+	IsApproved  bool      `db:"is_approved"`
+	Confirmed   bool      `db:"confirmed"`
+	CreatedAt   time.Time `db:"created_at"`
 }
