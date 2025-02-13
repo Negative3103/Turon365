@@ -95,6 +95,8 @@ func (ctrl *AdminController) AddLocation(c *gin.Context) {
 		return
 	}
 
+	location.ID = uuid.New()
+	location.CreatedAt = time.Now()
 	if err := ctrl.LocationRepo.Create(&location); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create location"})
 		return
@@ -136,7 +138,7 @@ func (ctrl *AdminController) DeleteLocation(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not delete location"})
 		return
 	}
-	c.JSON(http.StatusNoContent, nil)
+	c.JSON(http.StatusOK, nil)
 }
 
 func (ctrl *AdminController) GetAllJobs(c *gin.Context) {
